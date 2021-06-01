@@ -19,7 +19,7 @@ To access this project on your local files, you can clone it using these steps
 1. Open your terminal
 1. On your terminal, clone the project.
 
-1. $ git clone git@github.com:peterken674/password-locker.git
+1. $ git clone https://github.com/Roney-juma/Password_manager
 1. Navigate into the cloned project.
 
 1. $ cd password-locker
