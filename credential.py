@@ -22,4 +22,16 @@ class Credential:
 
     list_account = []  # Empty credentials list
 
+    def save_credential(self):
+        '''
+        Saves credential object in the credentials list
+        '''
+        Credential.list_credentials.append(self)
+
+    def delete_credential(self):
+        '''
+        Deletes credential obj from credentials list
+        '''
+        Credential.list_credentials.remove(self)
+
     
