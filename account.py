@@ -41,9 +41,15 @@ class Account_details:
         Returns :
             Boolean: True or false depending if the account exists
         '''
-        for account in cls.accounts_list:
+        for account in cls.list_accounts:
             if account.user_name==username:
                 return True
 
-        return False     
+        return False 
+
+    def delete_account(self):
+        '''
+        delete_acount method deletes the saved account from the list_accounts
+        '''
+        Account_details.list_accounts.remove(self)     
 
