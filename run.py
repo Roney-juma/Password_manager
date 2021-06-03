@@ -107,3 +107,23 @@ def main():
     login = False  # Set initial login value to false
     sign_name = ''  # Name of user currently logged in
     logged = True
+
+    def load_pickles():
+        try:
+            file_object = open('accounts.pydata', 'rb')
+            Account_details.accounts_list = pickle.load(file_object)
+            file_object.close()
+            print("\nLOADED PICKLES ACCOUNTS")
+        except:
+            print("\nCLDN'T LOAD PICKLES ACCOUNTS")
+            Account_details.accounts_list = []
+
+        try:
+            file_objectt = open('credentials.pydata', 'rb')
+            Credential.credentials_list = pickle.load(file_objectt)
+            file_object.close()
+            print("\nLOADED PICKLES CREDENTIALS")
+        except:
+            print("\nCLDN'T LOAD PICKLES CREDENTIALS")
+            Credential.credentials_list = []
+
