@@ -127,3 +127,27 @@ def main():
             print("\nCLDN'T LOAD PICKLES CREDENTIALS")
             Credential.credentials_list = []
 
+def pickle_save():
+        try:
+            file_object = open('accounts.pydata', 'wb')
+            pickle.dump(Account_details.accounts_list, file_object)
+            file_object.close()
+            print("\nSAVED ACCOUNTS TO PICKLE")
+
+        except Exception as e:
+            print(e)
+            print("\nCOULDN'T ACCOUNTS SAVE  TO PICKLES.")
+
+        try:
+            file_objectt = open('credentials.pydata', 'wb')
+            pickle.dump(display_credentials(), file_objectt)
+            file_objectt.close()
+            print("\nSAVED CREDENTIALS TO PICKLE")
+
+        except Exception as e:
+            print(e)
+            print("\nCOULDN'T CREDENTIALS SAVE  TO PICKLES.")
+
+def display_title():
+    os.system('clear')
+    
