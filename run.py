@@ -1,6 +1,7 @@
 
 from account import Account_details
 from credential import Credential
+from termcolor import colored, cprint
 import os
 import time
 import pickle
@@ -108,7 +109,7 @@ def main():
     sign_name = ''  # Name of user currently logged in
     logged = True
 
-    def load_pickles():
+def load_pickles():
         try:
             file_object = open('accounts.pydata', 'rb')
             Account_details.accounts_list = pickle.load(file_object)
@@ -150,4 +151,90 @@ def pickle_save():
 
 def display_title():
     os.system('clear')
-    
+
+
+while logged:
+        display_title()
+        load_pickles()
+
+        while login == False:
+            cprint("""
+        Use the following short codes to manage your password locker account 
+            'ln' - Login 
+            'xx' - Close app
+            """, "blue")
+            s_code = input(
+                colored('\tWhat would you like to do? >> ', 'cyan')).lower()
+            if s_code == 'ln':
+                acc_code = input(
+                    colored('\tDo you have an account? Y/N >> ', 'cyan')).upper()
+                if acc_code == 'Y':
+                    cprint(
+                        '\tEnter your username and password  to login >>>\n', 'pink')
+                    login_user_name = input(
+                        colored('\tEnter username >> ', 'cyan'))
+                    login_password = input(
+                        colored('\tEnter password >> ', 'cyan'))
+                    print("\n\t\tSigning in...")
+                    time.sleep(1.5)
+                    if auth_user(login_user_name, login_password):
+                        cprint('\n\t\tLOGIN SUCCESSFUL',
+                               'green', attrs=['bold'])
+                        sign_name = login_user_name
+                        login = True
+                    else:
+                        cprint('\n\t\tSORRY COULD NOT VERIFY',
+                               'red', attrs=['bold'])
+
+                elif acc_code == 'N':
+                    cprint(
+                        '\tEnter your username,firstname,lastname and password  to register account >>>\n', 'blue')
+                    reg_user_name = input(
+                        colored('\tEnter username >> ', 'cyan'))
+                    reg_f_name = input(
+                        colored('\tEnter firstname >> ', 'cyan'))
+                    reg_l_name = input(colored('\tEnter lastname >> ', 'cyan'))
+                    reg_password = input(
+                        colored('\tEnter password >> ', 'cyan'))
+                    print("\n\t\tRegistering ...")
+                    time.sleep(1.5)
+                    if check_account_exists(reg_user_name):
+                        cprint(
+                            f"\n\t\tACCOUNT WITH, {reg_user_name.upper()} USERNAME ALREADY CREATED", "red", attrs=['bold'])
+                    else:
+                        new_acc = create_account(
+                            reg_user_name, reg_f_name, reg_l_name, reg_password)
+                        save_account(new_acc)
+
+                        cprint(
+                            "\n\t\tCONGRATULATIONS, YOUR ACCOUNT HAS BEEN CREATED", "green", attrs=['bold'])
+                        cprint("\n\tSign into your new account", "blue")
+                        sign_username = input(
+                            colored('\n\tEnter username >> ', 'cyan'))
+                        sign_password = input(
+                            colored('\n\tEnter password >> ', 'cyan'))
+                        print("\n\t\tSigning in ...")
+                        time.sleep(1.5)
+                        if auth_user(sign_username, sign_password):
+                            cprint("\n\t\tLOGIN SUCCESSFUL",
+                                   "green", attrs=['bold'])
+                            sign_name = sign_username
+                            login = True
+                        else:
+                            cprint('\n\t\tSORRY COULD NOT VERIFY USER',
+                                   'red', attrs=['bold'])
+                else:
+                    cprint('\n\t\tPLEASE USE THE GIVEN SHORT CODES',
+                           'red', attrs=['bold'])
+            elif s_code == 'xx':
+                cprint(f"""\n\t\tTHANK YOU FOR USING PASSWORD LOCKER
+        \t\tBye...
+        \t\t\t\t\tClosing App >>>>>
+        """, "red", attrs=['bold'])
+                pickle_save()
+                time.sleep(1.5)
+                logged = False
+                break
+            else:
+                cprint('\n\t\tPLEASE USE THE GIVEN SHORT CODES',
+                       'red', attrs=['bold'])
