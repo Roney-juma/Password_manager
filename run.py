@@ -1,5 +1,4 @@
-
-from account import Account_details
+from account import Account
 from credential import Credential
 from termcolor import colored, cprint
 import os
@@ -13,7 +12,7 @@ def create_account(username, fname, lname, p_word):
     '''
     Function to create new account
     '''
-    new_account = Account_details(username, fname, lname, p_word)
+    new_account = Account(username, fname, lname, p_word)
     return new_account
 
 
@@ -35,21 +34,22 @@ def check_account_exists(username):
     '''
     Function that check if an account with that username already exists and return a Boolean
     '''
-    return Account_details.account_exists(username)
+    return Account.account_exists(username)
 
 
 def auth_user(username, password):
     '''
     Function to authenicate user during login
     '''
-    return Account_details.auth_user(username, password)
+    return Account.auth_user(username, password)
 
-    def create_credential(page, username, password):
-        
-        '''
-        Function to create credentials
-        '''
+# Functions that implement the behaviours in credential class.
 
+
+def create_credential(page, username, password):
+    '''
+    Function to create credentials
+    '''
     new_credential = Credential(page, username, password)
     return new_credential
 
@@ -109,15 +109,15 @@ def main():
     sign_name = ''  # Name of user currently logged in
     logged = True
 
-def load_pickles():
+    def load_pickles():
         try:
             file_object = open('accounts.pydata', 'rb')
-            Account_details.accounts_list = pickle.load(file_object)
+            Account.accounts_list = pickle.load(file_object)
             file_object.close()
             print("\nLOADED PICKLES ACCOUNTS")
         except:
             print("\nCLDN'T LOAD PICKLES ACCOUNTS")
-            Account_details.accounts_list = []
+            Account.accounts_list = []
 
         try:
             file_objectt = open('credentials.pydata', 'rb')
@@ -128,10 +128,10 @@ def load_pickles():
             print("\nCLDN'T LOAD PICKLES CREDENTIALS")
             Credential.credentials_list = []
 
-def pickle_save():
+    def pickle_save():
         try:
             file_object = open('accounts.pydata', 'wb')
-            pickle.dump(Account_details.accounts_list, file_object)
+            pickle.dump(Account.accounts_list, file_object)
             file_object.close()
             print("\nSAVED ACCOUNTS TO PICKLE")
 
@@ -149,11 +149,25 @@ def pickle_save():
             print(e)
             print("\nCOULDN'T CREDENTIALS SAVE  TO PICKLES.")
 
-def display_title():
-    os.system('clear')
-
-
-while logged:
+    def display_title():
+        os.system('clear')
+        '''
+    Function to display app title bar
+    '''
+        cprint("""
+          \n\t\t\t\t**********************************************
+          \t\t**************************************************************************
+          \t*******************************************************************************************
+          \n
+          \t\t\t\t        
+          \t\t\t\t       
+          \t\t\t\t       |\    /|   
+          \t\t\t\t       | \  / |
+          \t\t\t\t       |  \/  |
+          \n\t\t\t\t***  WELCOME TO PASSWORD LOCKER  ***
+          \n`\t\t\t******************************************************************
+          """, "magenta")
+    while logged:
         display_title()
         load_pickles()
 
@@ -238,170 +252,155 @@ while logged:
             else:
                 cprint('\n\t\tPLEASE USE THE GIVEN SHORT CODES',
                        'red', attrs=['bold'])
-            lse:
-                    cprint('\n\t\tPLEASE USE THE GIVEN SHORT CODES',
-                           'red', attrs=['bold'])
-            elif s_code == 'xx':
-                cprint(f"""\n\t\tTHANK YOU FOR USING PASSWORD LOCKER
+
+        while login == True:
+            time.sleep(1.5)
+            cprint(f"""
+        {sign_name.upper()}, WELCOME TO YOUR PASSWORD LOCKER:
+        Use the following commands to navigate the application:
+          'sc' >> Save existing page credentials
+          'cc' >> Create new page credentials
+          'dc' >> Display all credentials saved
+          'fc' >> Find credential saved by page name
+          'cp' >> Copy pagename credential password to clipboard
+          'dl' >> Delete page credential
+          'lgo' >> Log out
+          'ex' >> Close App
+          """, "blue")
+            app_code = input(
+                colored('\tWhat would you like to do? >> ', 'cyan')).lower()
+
+            if app_code == 'sc':
+                cprint(
+                    '\tEnter pagename,username and password to save credentials >>>\n', 'blue')
+                page_name = input(
+                    colored('\n\tEnter pagename >> ', 'cyan')).lower()
+                user_name = input(
+                    colored('\n\tEnter page username >> ', 'cyan'))
+                pass_word = input(
+                    colored('\n\tEnter page password >> ', 'cyan'))
+                print("\n\t\tSaving credentials ...")
+                time.sleep(1.5)
+                if check_credential_exists(page_name):
+                    cprint('\n\t\tCREDENTIALS FOR '+page_name.upper() +
+                           ' ALREADY EXISTS', 'red', attrs=['bold'])
+                else:
+                    new_credential = create_credential(
+                        page_name, user_name, pass_word)
+                    save_credential(new_credential)
+                    cprint("\n\t\t"+page_name.upper() +
+                           ", CREDENTIALS SAVED", "green", attrs=['bold'])
+
+            elif app_code == 'cc':
+                cprint(
+                    '\tEnter pagename,username and password to create and save new page credentials >>>\n', 'blue')
+                page_name = input(
+                    colored('\n\tEnter pagename >> ', 'cyan')).lower()
+                user_name = input(
+                    colored('\n\tEnter page username >> ', 'cyan'))
+                gen_pass_code = input(colored(
+                    '\tWould you like to generate a random password? Y/N >> ', 'cyan')).upper()
+                pass_word = ''
+                if gen_pass_code == 'Y':
+                    pass_len = int(input(colored(
+                        '\tHow long would you like your password? Provide numbers only >> ', 'cyan')))
+                    pass_word = generate_password(pass_len)
+                else:
+                    pass_word = input(
+                        colored('\n\tEnter page password >> ', 'cyan'))
+                print("\n\t\tCreating and Saving credentials ...")
+                time.sleep(1.5)
+                if check_credential_exists(page_name):
+                    cprint('\n\t\tCREDENTIALS FOR '+page_name.upper() +
+                           ' ALREADY EXISTS', 'red', attrs=['bold'])
+                else:
+                    new_credential = create_credential(
+                        page_name, user_name, pass_word)
+                    save_credential(new_credential)
+                    cprint("\n\t\t"+page_name.upper() +
+                           ", CREDENTIALS SAVED", "green", attrs=['bold'])
+
+            elif app_code == 'dc':
+                if len(display_credentials()) > 0:
+                    cprint("\n\t\t"+sign_name.upper() +
+                           ", CREDENTIALS", "green", attrs=['bold'])
+                    for credential in display_credentials():
+                        cprint(f'''
+                -------------------------------------------------------
+                    Page Name >>>> {credential.page_name.upper()}               
+                    Page Username >>>> {credential.user_name}               
+                    Page Password >>>> {credential.pass_word}               
+                -------------------------------------------------------
+            ''', 'green')
+                else:
+                    cprint("\n\t\t"+sign_name.upper() +
+                           ",HAS NO CREDENTIALS SAVED", "green", attrs=['bold'])
+
+            elif app_code == 'fc':
+                search_page = input(
+                    colored('\n\tEnter page name to search credentials >> ', 'cyan')).lower()
+                print("\n\t\tLoading ...")
+                time.sleep(1.5)
+                if check_credential_exists(search_page):
+                    found_credential = find_cred_by_pagename(search_page)
+                    cprint(f'''
+                -------------------------------------------------------
+                    Page Name >>>> {found_credential.page_name.upper()}               
+                    Page Username >>>> {found_credential.user_name}               
+                    Page Password >>>> {found_credential.pass_word}               
+                -------------------------------------------------------
+            ''', 'green')
+                else:
+                    cprint(
+                        f'\n\t\t{search_page.upper()} DOES NOT EXISTS', 'red', attrs=['bold'])
+
+            elif app_code == 'cp':
+                search_page = input(colored(
+                    '\n\tEnter page name to copy password to clipboard >> ', 'cyan')).lower()
+                print("\n\t\tSearching ...")
+                time.sleep(1.5)
+                if check_credential_exists(search_page):
+                    copy_cred_pass(search_page)
+                    cprint("\n\t\t"+search_page.upper() +
+                           ", PASSWORD COPIED TO CLIPBOARD", "green", attrs=['bold'])
+                else:
+                    cprint(
+                        f'\n\t\t{search_page.upper()} DOES NOT EXISTS', 'red', attrs=['bold'])
+            elif app_code == 'dl':
+                del_page = input(
+                    colored('\n\tEnter page name you want to delete >> ', 'cyan')).lower()
+                print("\n\t\tDeleting ...")
+                time.sleep(1.5)
+                if check_credential_exists(del_page):
+                    found_page = find_cred_by_pagename(del_page)
+                    found_page.delete_credential()
+                    cprint("\n\t\t"+del_page.upper() +
+                           ", CREDENTIALS DELETED", "green", attrs=['bold'])
+                else:
+                    cprint(
+                        f'\n\t\t{del_page.upper()} DOES NOT EXISTS', 'red', attrs=['bold'])
+
+            elif app_code == 'lgo':
+                cprint(f"""\n\t\t{sign_name.upper()}, THANK YOU FOR USING PASSWORD LOCKER
+        \t\tBye...
+        \t\t\t\t\tLogin out >>>>>
+        """, "green", attrs=['bold'])
+                time.sleep(1.5)
+                login = False
+            elif app_code == 'ex':
+                cprint(f"""\n\t\t{sign_name.upper()}, THANK YOU FOR USING PASSWORD LOCKER
         \t\tBye...
         \t\t\t\t\tClosing App >>>>>
         """, "red", attrs=['bold'])
                 pickle_save()
                 time.sleep(1.5)
+                login = False
                 logged = False
-                break
             else:
                 cprint('\n\t\tPLEASE USE THE GIVEN SHORT CODES',
                        'red', attrs=['bold'])
 
-            while login == True:
-                time.sleep(1.5)
-                cprint(f"""
-            {sign_name.upper()}, WELCOME TO YOUR PASSWORD LOCKER:
-            Use the following commands to navigate the application:
-            'sc' >> Save existing page credentials
-            'cc' >> Create new page credentials
-            'dc' >> Display all credentials saved
-            'fc' >> Find credential saved by page name
-            'cp' >> Copy pagename credential password to clipboard
-            'dl' >> Delete page credential
-            'lgo' >> Log out
-            'ex' >> Close App
-            """, "blue")
-                app_code = input(
-                    colored('\tWhat would you like to do? >> ', 'cyan')).lower()
-
-                if app_code == 'sc':
-                    cprint(
-                        '\tEnter pagename,username and password to save credentials >>>\n', 'blue')
-                    page_name = input(
-                        colored('\n\tEnter pagename >> ', 'cyan')).lower()
-                    user_name = input(
-                        colored('\n\tEnter page username >> ', 'cyan'))
-                    pass_word = input(
-                        colored('\n\tEnter page password >> ', 'cyan'))
-                    print("\n\t\tSaving credentials ...")
-                    time.sleep(1.5)
-                    if check_credential_exists(page_name):
-                        cprint('\n\t\tCREDENTIALS FOR '+page_name.upper() +
-                            ' ALREADY EXISTS', 'red', attrs=['bold'])
-                    else:
-                        new_credential = create_credential(
-                            page_name, user_name, pass_word)
-                        save_credential(new_credential)
-                        cprint("\n\t\t"+page_name.upper() +
-                            ", CREDENTIALS SAVED", "green", attrs=['bold'])
-
-                elif app_code == 'cc':
-                    cprint(
-                        '\tEnter pagename,username and password to create and save new page credentials >>>\n', 'blue')
-                    page_name = input(
-                        colored('\n\tEnter pagename >> ', 'cyan')).lower()
-                    user_name = input(
-                        colored('\n\tEnter page username >> ', 'cyan'))
-                    gen_pass_code = input(colored(
-                        '\tWould you like to generate a random password? Y/N >> ', 'cyan')).upper()
-                    pass_word = ''
-                    if gen_pass_code == 'Y':
-                        pass_len = int(input(colored(
-                            '\tHow long would you like your password? Provide numbers only >> ', 'cyan')))
-                        pass_word = generate_password(pass_len)
-                    else:
-                        pass_word = input(
-                            colored('\n\tEnter page password >> ', 'cyan'))
-                    print("\n\t\tCreating and Saving credentials ...")
-                    time.sleep(1.5)
-                    if check_credential_exists(page_name):
-                        cprint('\n\t\tCREDENTIALS FOR '+page_name.upper() +
-                            ' ALREADY EXISTS', 'red', attrs=['bold'])
-                    else:
-                        new_credential = create_credential(
-                            page_name, user_name, pass_word)
-                        save_credential(new_credential)
-                        cprint("\n\t\t"+page_name.upper() +
-                            ", CREDENTIALS SAVED", "green", attrs=['bold'])
-
-                elif app_code == 'dc':
-                    if len(display_credentials()) > 0:
-                        cprint("\n\t\t"+sign_name.upper() +
-                            ", CREDENTIALS", "green", attrs=['bold'])
-                        for credential in display_credentials():
-                            cprint(f'''
-                    -------------------------------------------------------
-                        Page Name >>>> {credential.page_name.upper()}               
-                        Page Username >>>> {credential.user_name}               
-                        Page Password >>>> {credential.pass_word}               
-                    -------------------------------------------------------
-                ''', 'green')
-                    else:
-                        cprint("\n\t\t"+sign_name.upper() +
-                            ",HAS NO CREDENTIALS SAVED", "green", attrs=['bold'])
-
-                elif app_code == 'fc':
-                    search_page = input(
-                        colored('\n\tEnter page name to search credentials >> ', 'cyan')).lower()
-                    print("\n\t\tLoading ...")
-                    time.sleep(1.5)
-                    if check_credential_exists(search_page):
-                        found_credential = find_cred_by_pagename(search_page)
-                        cprint(f'''
-                    -------------------------------------------------------
-                        Page Name >>>> {found_credential.page_name.upper()}               
-                        Page Username >>>> {found_credential.user_name}               
-                        Page Password >>>> {found_credential.pass_word}               
-                    -------------------------------------------------------
-                ''', 'green')
-                    else:
-                        cprint(
-                            f'\n\t\t{search_page.upper()} DOES NOT EXISTS', 'red', attrs=['bold'])
-
-                elif app_code == 'cp':
-                    search_page = input(colored(
-                        '\n\tEnter page name to copy password to clipboard >> ', 'cyan')).lower()
-                    print("\n\t\tSearching ...")
-                    time.sleep(1.5)
-                    if check_credential_exists(search_page):
-                        copy_cred_pass(search_page)
-                        cprint("\n\t\t"+search_page.upper() +
-                            ", PASSWORD COPIED TO CLIPBOARD", "green", attrs=['bold'])
-                    else:
-                        cprint(
-                            f'\n\t\t{search_page.upper()} DOES NOT EXISTS', 'red', attrs=['bold'])
-                elif app_code == 'dl':
-                    del_page = input(
-                        colored('\n\tEnter page name you want to delete >> ', 'cyan')).lower()
-                    print("\n\t\tDeleting ...")
-                    time.sleep(1.5)
-                    if check_credential_exists(del_page):
-                        found_page = find_cred_by_pagename(del_page)
-                        found_page.delete_credential()
-                        cprint("\n\t\t"+del_page.upper() +
-                            ", CREDENTIALS DELETED", "green", attrs=['bold'])
-                    else:
-                        cprint(
-                            f'\n\t\t{del_page.upper()} DOES NOT EXISTS', 'red', attrs=['bold'])
-
-                elif app_code == 'lgo':
-                    cprint(f"""\n\t\t{sign_name.upper()}, THANK YOU FOR USING PASSWORD LOCKER
-            \t\tBye...
-            \t\t\t\t\tLogin out >>>>>
-            """, "green", attrs=['bold'])
-                    time.sleep(1.5)
-                    login = False
-                elif app_code == 'ex':
-                    cprint(f"""\n\t\t{sign_name.upper()}, THANK YOU FOR USING PASSWORD LOCKER
-            \t\tBye...
-            \t\t\t\t\tClosing App >>>>>
-            """, "red", attrs=['bold'])
-                    pickle_save()
-                    time.sleep(1.5)
-                    login = False
-                    logged = False
-                else:
-                    cprint('\n\t\tPLEASE USE THE GIVEN SHORT CODES',
-                        'red', attrs=['bold'])
-
 
 if __name__ == '__main__':
 
-main()
+    main()
