@@ -1,5 +1,5 @@
 import unittest
-from account import Account_details
+from account import Account
 
 
 class TestAccount(unittest.TestCase):
@@ -13,22 +13,22 @@ class TestAccount(unittest.TestCase):
         '''
         Set up method to run before each test cases.
         '''
-        self.new_account = Account_details('jush', 'Roney', 'Juma', 'fghwdgkwd')
+        self.new_account = Account('jush', 'Hassan', 'Juma', 'mshairi1')
 
     def tearDown(self):
         '''
         tearDown method that does clean up after each test case has run.
         '''
-        Account_details.accounts_list = []
+        Account.accounts_list = []
 
     def test_init(self):
         '''
         Test_init test case to test if the object is initialized properly
         '''
         self.assertEqual(self.new_account.user_name, 'jush')
-        self.assertEqual(self.new_account.first_name, 'Roney')
+        self.assertEqual(self.new_account.first_name, 'Hassan')
         self.assertEqual(self.new_account.last_name, 'Juma')
-        self.assertEqual(self.new_account.password, '')
+        self.assertEqual(self.new_account.pass_word, 'mshairi1')
 
     def test_save_account(self):
         '''
@@ -36,16 +36,16 @@ class TestAccount(unittest.TestCase):
         the accounts list
         '''
         self.new_account.save_account()
-        self.assertEqual(len(Account_details.list_accounts), 1)
+        self.assertEqual(len(Account.accounts_list), 1)
 
     def test_save_mult_accounts(self):
         '''
         Test case to test if we can save multiple accounts in accounts_list
         '''
         self.new_account.save_account()
-        test_acc = Account_details('jush', 'Juma', 'James', 'Moringa')
+        test_acc = Account('jush', 'Juma', 'James', 'Moringa')
         test_acc.save_account()
-        self.assertEqual(len(Account_details.accounts_list), 2)
+        self.assertEqual(len(Account.accounts_list), 2)
 
     def test_auth_user(self):
         '''
@@ -53,14 +53,14 @@ class TestAccount(unittest.TestCase):
         '''
         self.new_account.save_account()
         self.assertTrue(self.new_account.auth_user(
-            self.new_account.user_name, self.new_account.password))
+            self.new_account.user_name, self.new_account.pass_word))
 
     def test_account_exists(self):
         '''
         Test case to test if an account already exists
         '''
         self.new_account.save_account()
-        self.assertTrue(Account_details.account_exists(self.new_account.user_name))
+        self.assertTrue(Account.account_exists(self.new_account.user_name))
 
     def test_delete_account(self):
         '''
@@ -68,7 +68,7 @@ class TestAccount(unittest.TestCase):
         '''
         self.new_account.save_account()
         self.new_account.delete_account()
-        self.assertEqual(len(Account_details.accounts_list), 0)
+        self.assertEqual(len(Account.accounts_list), 0)
 
 
 if __name__ == '__main__':
