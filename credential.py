@@ -8,7 +8,7 @@ class Credential:
     Class that generates an instance of a Credential
     """
 
-    def __init__(self, page_name, user_name, password):
+    def __init__(self, page_name, user_name, pass_word):
         '''
         __init__ method that helps us define properties for our objects.
         Args:
@@ -18,21 +18,21 @@ class Credential:
         '''
         self.page_name = page_name
         self.user_name = user_name
-        self.password = password
+        self.pass_word = pass_word
 
-    list_account = []  # Empty credentials list
+    credentials_list = []  # Empty credentials list
 
     def save_credential(self):
         '''
         Saves credential object in the credentials list
         '''
-        Credential.list_credentials.append(self)
+        Credential.credentials_list.append(self)
 
     def delete_credential(self):
         '''
         Deletes credential obj from credentials list
         '''
-        Credential.list_credentials.remove(self)
+        Credential.credentials_list.remove(self)
 
     @classmethod
     def find_by_pagename(cls, pagename):
@@ -54,9 +54,9 @@ class Credential:
         Args:
             pagename: Page name to search if it exists
         Returns :
-            True or false depending if the credential exists
+            Boolean: True or false depending if the credential exists
         '''
-        for credential in cls.list_credentials:
+        for credential in cls.credentials_list:
             if credential.page_name == pagename:
                 return True
 
@@ -88,4 +88,3 @@ class Credential:
         '''
         copy_cred = Credential.find_by_pagename(pagename)
         pyperclip.copy(self.copy_cred.pass_word)
-
