@@ -151,22 +151,8 @@ def main():
 
     def display_title():
         os.system('clear')
-        '''
-    Function to display app title bar
-    '''
-        cprint("""
-          \n\t\t\t\t**********************************************
-          \t\t**************************************************************************
-          \t*******************************************************************************************
-          \n
-          \t\t\t\t        
-          \t\t\t\t       
-          \t\t\t\t       |\    /|   
-          \t\t\t\t       | \  / |
-          \t\t\t\t       |  \/  |
-          \n\t\t\t\t***  WELCOME TO PASSWORD LOCKER  ***
-          \n`\t\t\t******************************************************************
-          """, "magenta")
+        
+    
     while logged:
         display_title()
         load_pickles()
@@ -214,7 +200,7 @@ def main():
                     time.sleep(1.5)
                     if check_account_exists(reg_user_name):
                         cprint(
-                            f"\n\t\tACCOUNT WITH, {reg_user_name.upper()} USERNAME ALREADY CREATED", "red", attrs=['bold'])
+                            f"\n\t\\ACCOUNT WITH, {reg_user_name.upper()} USERNAME ALREADY CREATED", "red", attrs=['bold'])
                     else:
                         new_acc = create_account(
                             reg_user_name, reg_f_name, reg_l_name, reg_password)
